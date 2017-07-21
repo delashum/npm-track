@@ -1,6 +1,6 @@
 {
     "name": "npm-track",
-    "version": "1.0.0",
+    "version": "0.0.0",
     "description": "Middleware to track requests to your node application in a timeline fashion",
     "main": "index.js",
     "scripts": {
