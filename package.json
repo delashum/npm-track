@@ -1,0 +1,24 @@
+{
+    "name": "npm-track",
+    "version": "1.0.0",
+    "description": "Middleware to track requests to your node application in a timeline fashion",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/delashum/npm-track.git"
+    },
+    "keywords": [
+        "tracking",
+        "logs",
+        "analytics"
+    ],
+    "author": "delashum",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/delashum/npm-track/issues"
+    },
+    "homepage": "https://github.com/delashum/npm-track#readme"
+}
