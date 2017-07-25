@@ -1,84 +1,85 @@
-var fs = require("fs")
-var path = require("path")
-var curPath = process.cwd()
+var fs = require("fs"),
+    curPath = "",
+    dirPath = curPath + "Logs",
+    obj = {},
+    filename, filepath
+
+UpdateFileName()
+
+CheckDir(function () {
+    fs.readFile(filepath, function (err, data) {
+        if (err) {
+            obj = {
+                id: filename.split(".")[0]
+            }
+        } else obj = JSON.parse(data)
+    })
+})
+
+
+
 module.exports = function (req, res, next) {
     req.start = new Date()
-    try {
-        req.on("end", function () {
-            CheckDir({
-                time: new Date(),
-                params: req.params,
-                body: req.body,
-                method: req.method,
-                cookies: req.cookies,
-                ip: req.ip,
-                url: req.baseUrl + req.path,
-                fullUrl: req.originalUrl,
-                status: res.statusCode,
-                responseTime: (new Date() - req.start)
-            })
+    req.on("end", function () {
+        LogData({
+            time: new Date(),
+            params: req.params,
+            body: req.body,
+            method: req.method,
+            cookies: req.cookies,
+            ip: req.ip,
+            url: req.baseUrl + req.path,
+            fullUrl: req.originalUrl,
+            status: res.statusCode,
+            responseTime: (new Date() - req.start)
         })
-    } catch (err) {
-        console.log(err)
-    }
+    })
+    UpdateFileName()
     next()
 }
 
-function CheckDir(obj) {
-    fs.access(curPath + "/Logs", function (err) {
+function CheckDir(callback) {
+    fs.access(dirPath, function (err) {
         if (err) {
-            fs.mkdir(curPath + "/Logs", function (err) {
+            fs.mkdir(dirPath, function (err) {
                 if (err) console.log(err)
-                CheckFile(obj)
+                else callback()
             })
-        } else CheckFile(obj)
+        } else callback()
     })
 }
 
-function CheckFile(obj) {
-    var now = new Date()
-    var year = now.getFullYear(),
-        month = now.getMonth()
-
-    var filename = [year, month].join("-") + ".json"
-    fs.access(curPath + "/Logs/" + filename, function (err) {
-        if (err) {
-            fs.writeFile(curPath + "/Logs/" + filename, "{}", function (err) {
-                if (err) console.log(err)
-                LogData(obj, {}, curPath + "/Logs/" + filename)
-            })
-        } else {
-            fs.readFile(curPath + "/Logs/" + filename, function (err, data) {
-                if (err) console.log(err)
-                LogData(obj, JSON.parse(data), curPath + "/Logs/" + filename)
-            })
-        }
+function WriteFile() {
+    fs.writeFile(filepath, JSON.stringify(obj), function (err) {
+        if (err) console.log("npm-track", err)
     })
 }
 
-function LogData(obj, json, filename) {
+function LogData(data) {
     var day = (new Date()).getDate()
 
-    if (!json[day]) {
-        json[day] = {
+    if (!obj[day]) {
+        obj[day] = {
             count: {},
             requests: []
         }
     }
 
-    var temp = json[day]
+    var temp = obj[day]
 
-    temp.requests.push(obj)
-    if (!temp.count[obj.url]) {
-        temp.count[obj.url] = 0
+    temp.requests.push(data)
+    if (!temp.count[data.url]) {
+        temp.count[data.url] = 0
     }
-    temp.count[obj.url]++;
+    temp.count[data.url]++;
 
-    WriteFile(JSON.stringify(json), filename)
+    WriteFile()
 }
 
-function WriteFile(json, filename) {
-    fs.writeFile(filename, json, function (err) {
-        if (err) console.log(err)
-    })
+function UpdateFileName() {
+    var now = new Date(),
+        year = now.getFullYear(),
+        month = now.getMonth()
+    filename = [year, month].join("-") + ".json"
+    filepath = [dirPath, filename].join("/")
 }
