@@ -31,7 +31,8 @@ module.exports = function (req, res, next) {
             url: req.baseUrl + req.path,
             fullUrl: req.originalUrl,
             status: res.statusCode,
-            responseTime: (new Date() - req.start)
+            responseTime: (new Date() - req.start),
+            route: req.route ? req.route.path : req.route
         })
     })
     UpdateFileName()
@@ -68,10 +69,11 @@ function LogData(data) {
     var temp = obj[day]
 
     temp.requests.push(data)
-    if (!temp.count[data.url]) {
-        temp.count[data.url] = 0
+    var url = data.route || data.url
+    if (!temp.count[url]) {
+        temp.count[url] = 0
     }
-    temp.count[data.url]++;
+    temp.count[url]++;
 
     WriteFile()
 }

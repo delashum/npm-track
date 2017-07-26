@@ -5,6 +5,11 @@
 ## Usage
 
 ```app.use(require("npm-track"))```
+*note: if using bodyparser, initialize before bodyparser, as bodyparser blocks some requests from being tracked
+
+## Performance
+
+Adds less than 1ms to each request, asynchronous, and runs post request
 
 
 ## What happens?
