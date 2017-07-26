@@ -24,6 +24,7 @@ module.exports = function (req, res, next) {
         LogData({
             time: new Date(),
             params: req.params,
+            query: req.query,
             body: req.body,
             method: req.method,
             cookies: req.cookies,
